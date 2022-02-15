@@ -70,7 +70,6 @@ def send_message(service, user_id, message):
 
 if __name__ == "__main__":
     service = create_service()
-
     sender = os.environ.get("test_sender")
     receiver = os.environ.get("test_receiver")
     message = create_message(sender, receiver , "this is a test subject", "hello. this is my test email 2.")

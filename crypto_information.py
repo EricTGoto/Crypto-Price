@@ -1,20 +1,12 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import send_email
+
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import os
 import json
-
-import smtplib, ssl
-
-def sendEmail():
-  port = 465
-  context = ssl.create_default_context()
-
-  with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-    server.login("dongmarleson@gmail.com", os.environ.get("gmail-password"))
-    server.sendmail("dongmarleson@gmail.com", "dongmarleson+1@gmail.com", "hello")
 
 token = os.environ.get("api-token")
 url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
@@ -55,10 +47,14 @@ def getData():
 def extractInfo(data: dict, id: str):
   name = data['data'][id]['name']
   price = data['data'][id]['quote']['USD']['price']
-  print(name)
-  print(price)
+  return [name, str(price)]
 
 if __name__ == "__main__":
-  #data = getData()
-  sendEmail()
-  #extractInfo(xd, '1027')
+  data = getData()
+  info = extractInfo(xd, '1027')
+  sender = os.environ.get("test_sender")
+  receiver = os.environ.get("test_receiver")
+  service = send_email.create_service()
+  message = send_email.create_message(sender, receiver, "Ethereum Update", " ".join(info) )
+  return_msg = send_email.send_message(service, "me", message)
+  print(return_msg)
