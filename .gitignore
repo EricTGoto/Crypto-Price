@@ -1,2 +1,4 @@
 .env
 quickstart.py
+credentials.json
+token.json
