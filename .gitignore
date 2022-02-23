@@ -4,3 +4,8 @@ credentials.json
 token.json
 __pycache__
 personalnotes.md
+db.sqlite3
+__init__.py
+settings.py
+wsgi.py
+asgi.py

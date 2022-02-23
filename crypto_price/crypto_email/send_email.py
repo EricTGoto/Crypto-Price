@@ -19,6 +19,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.compose']
 def create_service():
     """This function is adapted from quickstart.py by Google.
     """
+    creds = None
+    
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
