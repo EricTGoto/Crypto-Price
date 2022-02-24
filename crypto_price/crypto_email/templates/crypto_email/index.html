@@ -1,5 +1,6 @@
 {% extends "crypto_email/base.html" %}
 {% block content %}
+<h1>Top 5 by Market Cap</h1>
     {% for info in data %}
         <p>Name: {{ info.name }}</p>
         <p>Price: {{ info.price }}</p>

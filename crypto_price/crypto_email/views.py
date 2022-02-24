@@ -7,6 +7,22 @@ data = [
     {
         'name': "Ethereum",
         'price': "10000"
+    },
+    {
+        'name': "Bitcoin",
+        'price': "10000"
+    },
+    {
+        'name': "Dogecoin",
+        'price': "5"
+    },
+    {
+        'name': "Scamcoin",
+        'price': "21123"
+    },
+    {
+        'name': "Ponzicoin",
+        'price': "511"
     }
 ]
 
