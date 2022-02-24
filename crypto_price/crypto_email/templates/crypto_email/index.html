@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Email</title>
-</head>
-<body>
+{% extends "crypto_email/base.html" %}
+{% block content %}
     {% for info in data %}
         <p>Name: {{ info.name }}</p>
         <p>Price: {{ info.price }}</p>
     {% endfor %}
-</body>
-</html>
+{% endblock content %}
