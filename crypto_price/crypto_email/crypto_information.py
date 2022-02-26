@@ -18,6 +18,9 @@ class GetCryptoData():
     }
 
     def get_data(self, id: list) -> dict:
+        """
+        Takes in a list of ids and gets the latest quote data.
+        """
         url = GetCryptoData.BASE_URL + 'quotes/latest'
         parameters = {
             'id': ','.join(map(str,id))
