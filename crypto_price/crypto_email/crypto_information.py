@@ -94,6 +94,9 @@ class GetCryptoData():
             for coin_data in cleaned_map_data:
                 if coin_data['id'] == int(id):
                     coin_data['price'] = info['quote']['USD']['price']
+                    coin_data['market_cap'] = info['quote']['USD']['market_cap']
+                    coin_data['percent_change_24h'] = info['quote']['USD']['percent_change_24h']
+                    coin_data['percent_change_90d'] = info['quote']['USD']['percent_change_90d']
                     break
         return cleaned_map_data
 
@@ -115,7 +118,7 @@ if __name__ == "__main__":
     ids= crypto_info.get_IDs(map_result)
     quotes_latest_result = crypto_info.get_data(ids)
     clean = crypto_info.clean_map_response(map_result)
-    #print(quotes_latest_result)
+    print(quotes_latest_result)
     print(clean)
     print(crypto_info.add_coin_data_from_quotes_latest(quotes_latest_result, clean))
     
