@@ -27,10 +27,14 @@ data = [
 ]
 
 def index(request):
-    #crypto_info = crypto_information.GetCryptoData()
-    #raw_data = crypto_info.getData()
-    #data = crypto_info.extractInfo(raw_data, '1027')
-    #print(data)
+    crypto_info = crypto_information.GetCryptoData()
+    map_data = crypto_info.get_top_coins(5)
+    data = crypto_info.clean_map_response(map_data)
+    ids = crypto_info.get_IDs(map_data)
+    quotes= crypto_info.get_data(ids)
+    data = crypto_info.add_coin_data_from_quotes_latest(quotes, data)
+    print(data)
+    
     context = { 'data': data }
     return render(request, 'crypto_email/index.html', context)
 

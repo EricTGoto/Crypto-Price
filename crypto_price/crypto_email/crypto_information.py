@@ -21,6 +21,7 @@ class GetCryptoData():
     def get_data(self, id: list) -> dict:
         """
         Takes in a list of ids and gets the latest quote data.
+        Note: data is returned in order of ascending IDs.
         """
         url = GetCryptoData.BASE_URL + 'quotes/latest'
         parameters = {
@@ -86,11 +87,14 @@ class GetCryptoData():
     def add_coin_data_from_quotes_latest(self, quotes_latest_data: dict, cleaned_map_data: list):
         '''
         Takes in quotes latest data and cleaned map data and adds price info to the cleaned map data.
+        Returns a list of dictionaries with the following keys:
+        id, name, symbol, rank, price
         '''
-        index = 0
-        for info in quotes_latest_data['data'].values():
-            cleaned_map_data[index]['price'] = info['quote']['USD']['price']
-            index += 1
+        for id, info in quotes_latest_data['data'].items():
+            for coin_data in cleaned_map_data:
+                if coin_data['id'] == int(id):
+                    coin_data['price'] = info['quote']['USD']['price']
+                    break
         return cleaned_map_data
 
 if __name__ == "__main__":
@@ -111,6 +115,8 @@ if __name__ == "__main__":
     ids= crypto_info.get_IDs(map_result)
     quotes_latest_result = crypto_info.get_data(ids)
     clean = crypto_info.clean_map_response(map_result)
+    #print(quotes_latest_result)
+    print(clean)
     print(crypto_info.add_coin_data_from_quotes_latest(quotes_latest_result, clean))
     
     # info = extractInfo(xd, '1027')
