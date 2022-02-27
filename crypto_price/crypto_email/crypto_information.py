@@ -9,7 +9,8 @@ import os
 import json
 
 class GetCryptoData():
-    # map is one credit
+    # map and quotes/latest is one credit
+    # 333 credits per day, 10000 a month
     BASE_URL = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/'
     TOKEN = os.environ.get("api-token")
     HEADERS = {
@@ -59,12 +60,12 @@ class GetCryptoData():
         except (ConnectionError, Timeout, TooManyRedirects) as e:
             print(e) 
 
-    def clean_map_response(self, data: dict) -> dict:
+    def clean_map_response(self, map_response: dict) -> dict:
         """
         Takes in the dictionary result from the map api call and returns a formatted list of dictionaries with coin data.
         """
         formatted_data = []
-        for coin in data['data']:
+        for coin in map_response['data']:
             formatted_data.append({
                 'id': coin['id'],
                 'name': coin['name'],
@@ -73,21 +74,28 @@ class GetCryptoData():
                 })
         return formatted_data
 
-    def get_IDs(self, map_data: dict):
+    def get_IDs(self, map_response: dict):
         """
         Takes map response dictionary and extracts the IDs
         """    
         IDs = []
-        for coin in map_data['data']:
+        for coin in map_response['data']:
             IDs.append(coin['id'])
         return IDs
 
-    def get_coin_price(self, data: dict):
-        pass
+    def add_coin_data_from_quotes_latest(self, quotes_latest_data: dict, cleaned_map_data: list):
+        '''
+        Takes in quotes latest data and cleaned map data and adds price info to the cleaned map data.
+        '''
+        index = 0
+        for info in quotes_latest_data['data'].values():
+            cleaned_map_data[index]['price'] = info['quote']['USD']['price']
+            index += 1
+        return cleaned_map_data
 
 if __name__ == "__main__":
     crypto_info = GetCryptoData()
-    #data = crypto_info.get_top_coins(5)
+    #data = crypto_info.get_top_coins(2)
     #print(data)
 
     map_result = {'status': {'timestamp': '2022-02-26T18:31:54.293Z', 'error_code': 0, 'error_message': None, 'elapsed': 7, 'credit_count': 1, 'notice': None},
@@ -99,8 +107,11 @@ if __name__ == "__main__":
     {'id': 1839, 'name': 'BNB', 'symbol': 'BNB', 'slug': 'bnb', 'rank': 4, 'is_active': 1, 'first_historical_data': '2017-07-25T04:30:05.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': None}, 
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
+
     ids= crypto_info.get_IDs(map_result)
-    print(crypto_info.get_data(ids))
+    quotes_latest_result = crypto_info.get_data(ids)
+    clean = crypto_info.clean_map_response(map_result)
+    print(crypto_info.add_coin_data_from_quotes_latest(quotes_latest_result, clean))
     
     # info = extractInfo(xd, '1027')
     # sender = os.environ.get("test_sender")
