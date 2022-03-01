@@ -128,12 +128,14 @@ if __name__ == "__main__":
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
 
-    ids= crypto_info.get_IDs(map_result)
-    quotes_latest_result = crypto_info.get_data_from_cmp(ids)
-    clean = crypto_info.clean_map_response(map_result)
-    print(quotes_latest_result)
-    print(clean)
-    print(crypto_info.add_coin_data_from_quotes_latest(quotes_latest_result, clean))
+    # ids= crypto_info.get_IDs(map_result)
+    # quotes_latest_result = crypto_info.get_data_from_cmp(ids)
+    # clean = crypto_info.clean_map_response(map_result)
+    # print(quotes_latest_result)
+    # print(clean)
+    # print(crypto_info.add_coin_data_from_quotes_latest(quotes_latest_result, clean))
+
+    print(crypto_info.get_quotes(5))
     
     # info = extractInfo(xd, '1027')
     # sender = os.environ.get("test_sender")
