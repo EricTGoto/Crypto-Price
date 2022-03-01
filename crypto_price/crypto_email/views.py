@@ -5,7 +5,8 @@ from .models import Top5Crypto
 from django.utils import timezone
 
 def index(request):
-    data = Top5Crypto.fetch_data()
+    crypto_api = Top5Crypto()
+    data= crypto_api.fetch_data()
     context = { 'data': data }
     return render(request, 'crypto_email/index.html', context)
 

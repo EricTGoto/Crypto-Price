@@ -16,12 +16,15 @@ class Top5Crypto(models.Model):
         return self.name
 
     def fetch_data(self):
+        """
+        Fetches data depending on the scenario.
+        """
         # If database is empty, then fetch data from CoinMarketCap.
         if Top5Crypto.objects.all().count() == 0:
             print("initial fetch data")
             return self.initial_data_fetch()
         # If database is not empty and the cached data is more than x minutes old then fetch new data.
-        elif (timezone.now() - Top5Crypto.objects.first().time_stamp).seconds/60 >= 0.2:
+        elif (timezone.now() - Top5Crypto.objects.first().time_stamp).seconds/60 >= 15:
             print("fetch new data")
             return self.fetch_new_data()
         # If database is not empty and cached data is less than x minutes old, grab the cached data
