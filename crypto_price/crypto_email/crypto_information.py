@@ -7,6 +7,7 @@ from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import os
 import json
+from math import floor
 
 class GetCryptoData():
     # map and quotes/latest is one credit
@@ -18,7 +19,7 @@ class GetCryptoData():
         'X-CMC_PRO_API_KEY': TOKEN,
     }
 
-    def get_data(self, id: list) -> dict:
+    def get_data_from_cmp(self, id: list) -> dict:
         """
         Takes in a list of ids and gets the latest quote data.
         Note: data is returned in order of ascending IDs.
@@ -93,12 +94,24 @@ class GetCryptoData():
         for id, info in quotes_latest_data['data'].items():
             for coin_data in cleaned_map_data:
                 if coin_data['id'] == int(id):
-                    coin_data['price'] = info['quote']['USD']['price']
-                    coin_data['market_cap'] = info['quote']['USD']['market_cap']
-                    coin_data['percent_change_24h'] = info['quote']['USD']['percent_change_24h']
-                    coin_data['percent_change_90d'] = info['quote']['USD']['percent_change_90d']
+                    coin_data['price'] = round(info['quote']['USD']['price'], 2)
+                    coin_data['market_cap'] = floor(info['quote']['USD']['market_cap'])
+                    coin_data['percent_change_24h'] = round(info['quote']['USD']['percent_change_24h'], 2)
+                    coin_data['percent_change_90d'] = round(info['quote']['USD']['percent_change_90d'], 2)
                     break
         return cleaned_map_data
+
+    def get_quotes(self, number_of_quotes: int):
+        """
+        Gets formatted data.
+        """
+        crypto_info = GetCryptoData()
+        map_data = crypto_info.get_top_coins(number_of_quotes)
+        data = crypto_info.clean_map_response(map_data)
+        ids = crypto_info.get_IDs(map_data)
+        quotes= crypto_info.get_data_from_cmp(ids)
+        data = crypto_info.add_coin_data_from_quotes_latest(quotes, data)
+        return data
 
 if __name__ == "__main__":
     crypto_info = GetCryptoData()
@@ -116,7 +129,7 @@ if __name__ == "__main__":
     ]}
 
     ids= crypto_info.get_IDs(map_result)
-    quotes_latest_result = crypto_info.get_data(ids)
+    quotes_latest_result = crypto_info.get_data_from_cmp(ids)
     clean = crypto_info.clean_map_response(map_result)
     print(quotes_latest_result)
     print(clean)
