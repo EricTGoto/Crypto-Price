@@ -15,33 +15,29 @@ class TopCrypto(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def fetch_data(self):
+    def fetch_data(self, number_of_coins: int):
         """
         Fetches data depending on the scenario.
         """
         # If database is empty, then fetch data from CoinMarketCap.
         if TopCrypto.objects.all().count() == 0:
             print("initial fetch data")
-            return self.initial_data_fetch()
+            return self.initial_data_fetch(number_of_coins)
         # If database is not empty and the cached data is more than x minutes old then fetch new data.
         elif (timezone.now() - TopCrypto.objects.first().time_stamp).seconds/60 >= 15:
             print("fetch new data")
-            return self.fetch_new_data()
+            return self.fetch_new_data(number_of_coins)
         # If database is not empty and cached data is less than x minutes old, grab the cached data
         else:
             print("cached data")
             return TopCrypto.objects.all()
 
-    def initial_data_fetch(self):
+    def initial_data_fetch(self, number_of_coins: int):
         """
         When the website is accessed for the first time, the database will be empty so data will have to be fetched with the CMC API and then cached in to the database.
         """
         crypto_info = GetCryptoData()
-        map_data = crypto_info.get_top_coins(10)
-        data = crypto_info.clean_map_response(map_data)
-        ids = crypto_info.get_IDs(map_data)
-        quotes= crypto_info.get_data_from_cmp(ids)
-        data = crypto_info.add_coin_data_from_quotes_latest(quotes, data)
+        data = crypto_info.get_quotes(number_of_coins)
 
         # Cache into database
         for coin in data:
@@ -50,16 +46,12 @@ class TopCrypto(models.Model):
 
         return data
 
-    def fetch_new_data(self):
+    def fetch_new_data(self, number_of_coins: int):
         """
         If the page is reloaded or the refresh button is pressed and enough time has elapsed, fetch new data. Update the data in the database.
         """
         crypto_info = GetCryptoData()
-        map_data = crypto_info.get_top_coins(10)
-        data = crypto_info.clean_map_response(map_data)
-        ids = crypto_info.get_IDs(map_data)
-        quotes= crypto_info.get_data_from_cmp(ids)
-        data = crypto_info.add_coin_data_from_quotes_latest(quotes, data)
+        data = crypto_info.get_quotes(number_of_coins)
 
         for coin in data:
             TopCrypto.objects.filter(name=coin['name']).update(price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], time_stamp=timezone.now())

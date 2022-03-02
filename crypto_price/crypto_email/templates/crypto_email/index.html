@@ -2,7 +2,6 @@
 {% block content %}
 <h1>Top 5 by Market Cap</h1>
     {% for info in data %}
-        <p>Name: {{ info.name }}</p>
-        <p>Price: {{ info.price }}</p>
+        <p>{{ info.name }} {{ info.symbol }}: {{ info.price }} {{info.percent_change_24h }}%</p>
     {% endfor %}
 {% endblock content %}
