@@ -24,7 +24,7 @@ class TopCrypto(models.Model):
             print("initial fetch data")
             return self.initial_data_fetch(number_of_coins)
         # If database is not empty and the cached data is more than x minutes old then fetch new data.
-        elif (timezone.now() - TopCrypto.objects.first().time_stamp).seconds/60 >= 15:
+        elif (timezone.now() - TopCrypto.objects.first().time_stamp).seconds/60 >= 1:
             print("fetch new data")
             return self.fetch_new_data(number_of_coins)
         # If database is not empty and cached data is less than x minutes old, grab the cached data

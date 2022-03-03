@@ -110,8 +110,9 @@ class GetCryptoData():
         map_data = crypto_info.get_top_coins(number_of_quotes)
         cleaned_map_data = crypto_info.clean_map_response(map_data)
         ids = crypto_info.get_IDs(map_data)
+        icon_links = crypto_info.get_icon(ids)
         quotes= crypto_info.get_data_from_cmp(ids)
-        data = crypto_info.add_coin_info_to_map_result(quotes, cleaned_map_data)
+        data = crypto_info.add_coin_info_to_map_result(quotes, cleaned_map_data, icon_links)
         return data
 
     def get_icon(self, IDs: list):
@@ -147,14 +148,14 @@ if __name__ == "__main__":
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
 
-    ids= crypto_info.get_IDs(map_result)
-    icon_links = crypto_info.get_icon(ids)
-
-    quotes_latest_result = crypto_info.get_data_from_cmp(ids)
-    clean = crypto_info.clean_map_response(map_result)
+    #ids= crypto_info.get_IDs(map_result)
+    #icon_links = crypto_info.get_icon(ids)
+    print(crypto_info.get_quotes(10))
+    #quotes_latest_result = crypto_info.get_data_from_cmp(ids)
+    #clean = crypto_info.clean_map_response(map_result)
     #print(quotes_latest_result)
     #print(clean)
-    print(crypto_info.add_coin_info_to_map_result(quotes_latest_result, clean, icon_links ))
+    #print(crypto_info.add_coin_info_to_map_result(quotes_latest_result, clean, icon_links ))
 
     #print(crypto_info.get_quotes(5))
     
