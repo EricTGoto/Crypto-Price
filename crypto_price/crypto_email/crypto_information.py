@@ -85,11 +85,11 @@ class GetCryptoData():
             IDs.append(coin['id'])
         return IDs
 
-    def add_coin_data_from_quotes_latest(self, quotes_latest_data: dict, cleaned_map_data: list):
+    def add_coin_info_to_map_result(self, quotes_latest_data: dict, cleaned_map_data: list, icon_links: list):
         '''
         Takes in quotes latest data and cleaned map data and adds price info to the cleaned map data.
         Returns a list of dictionaries with the following keys:
-        id, name, symbol, rank, price
+        id, name, symbol, rank, price, logo, percent_change_24h, percent_change_90d, market_cap
         '''
         for id, info in quotes_latest_data['data'].items():
             for coin_data in cleaned_map_data:
@@ -98,6 +98,7 @@ class GetCryptoData():
                     coin_data['market_cap'] = floor(info['quote']['USD']['market_cap'])
                     coin_data['percent_change_24h'] = round(info['quote']['USD']['percent_change_24h'], 2)
                     coin_data['percent_change_90d'] = round(info['quote']['USD']['percent_change_90d'], 2)
+                    coin_data['logo'] = icon_links[f'{id}']
                     break
         return cleaned_map_data
 
@@ -107,11 +108,29 @@ class GetCryptoData():
         """
         crypto_info = GetCryptoData()
         map_data = crypto_info.get_top_coins(number_of_quotes)
-        data = crypto_info.clean_map_response(map_data)
+        cleaned_map_data = crypto_info.clean_map_response(map_data)
         ids = crypto_info.get_IDs(map_data)
         quotes= crypto_info.get_data_from_cmp(ids)
-        data = crypto_info.add_coin_data_from_quotes_latest(quotes, data)
+        data = crypto_info.add_coin_info_to_map_result(quotes, cleaned_map_data)
         return data
+
+    def get_icon(self, IDs: list):
+        url = GetCryptoData.BASE_URL + "info"
+        parameters = {
+            'id': ",".join(map(str, IDs))
+        }
+        session = Session()
+        session.headers.update(GetCryptoData.HEADERS)
+
+        icon_links = {}
+        try:
+            response = session.get(url, params=parameters)
+            data = json.loads(response.text)
+            for id in IDs:
+                icon_links[f'{id}'] = data['data'][str(id)]['logo']
+            return icon_links
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e) 
 
 if __name__ == "__main__":
     crypto_info = GetCryptoData()
@@ -128,14 +147,16 @@ if __name__ == "__main__":
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
 
-    # ids= crypto_info.get_IDs(map_result)
-    # quotes_latest_result = crypto_info.get_data_from_cmp(ids)
-    # clean = crypto_info.clean_map_response(map_result)
-    # print(quotes_latest_result)
-    # print(clean)
-    # print(crypto_info.add_coin_data_from_quotes_latest(quotes_latest_result, clean))
+    ids= crypto_info.get_IDs(map_result)
+    icon_links = crypto_info.get_icon(ids)
 
-    print(crypto_info.get_quotes(5))
+    quotes_latest_result = crypto_info.get_data_from_cmp(ids)
+    clean = crypto_info.clean_map_response(map_result)
+    #print(quotes_latest_result)
+    #print(clean)
+    print(crypto_info.add_coin_info_to_map_result(quotes_latest_result, clean, icon_links ))
+
+    #print(crypto_info.get_quotes(5))
     
     # info = extractInfo(xd, '1027')
     # sender = os.environ.get("test_sender")
