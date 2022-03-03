@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from django.db import models
 from django.utils import timezone
 from .crypto_information import GetCryptoData
@@ -11,6 +12,7 @@ class TopCrypto(models.Model):
     percent_change_90d = models.DecimalField(max_digits=5, decimal_places=2)
     symbol = models.CharField(max_length=5)
     rank = models.IntegerField()
+    logo = models.CharField(max_length=150)
 
     def __str__(self) -> str:
         return self.name
@@ -41,7 +43,7 @@ class TopCrypto(models.Model):
 
         # Cache into database
         for coin in data:
-            new_data = TopCrypto(name=coin['name'],price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'])
+            new_data = TopCrypto(name=coin['name'],price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], logo = coin['logo'])
             new_data.save()
 
         return data
@@ -52,9 +54,9 @@ class TopCrypto(models.Model):
         """
         crypto_info = GetCryptoData()
         data = crypto_info.get_quotes(number_of_coins)
-
+        # Update database
         for coin in data:
-            TopCrypto.objects.filter(name=coin['name']).update(price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], time_stamp=timezone.now())
+            TopCrypto.objects.filter(name=coin['name']).update(price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], time_stamp=timezone.now(), logo=coin['logo'])
 
         return data
 
