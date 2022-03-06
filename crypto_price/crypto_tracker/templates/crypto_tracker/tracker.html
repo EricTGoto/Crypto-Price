@@ -1,11 +1,17 @@
-<!DOCTYPE html>
+{% extends "crypto_email/base.html" %}
 
+{% block content %}
 <html>hi
 
-<form action="" method="post">
+<form action="{% url 'crypto_tracker:crypto_tracker' %}" method="post">
 {% csrf_token %}
     <input type="text" name="symbol">
     <input type="text" name="price">
     <input type="submit">
 </form>
+
+{% for info in data %}
+    <p> {{ info.symbol }} </p>
+{% endfor %}
 </html>
+{% endblock content %}
