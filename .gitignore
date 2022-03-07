@@ -9,3 +9,5 @@ __init__.py
 settings.py
 wsgi.py
 asgi.py
+migrations/
+main.css
