@@ -1,17 +1,28 @@
 {% extends "crypto_email/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'crypto_tracker/crypto_tracker.css' %}">
+{% endblock css %}
+
+{% block js %}
+<script defer src="{% static 'crypto_tracker/crypto_tracker.js' %}"></script>
+{% endblock js %}
 
 {% block content %}
-<html>hi
+<html>Track your favourite cryptocurrencies!
 
-<form action="{% url 'crypto_tracker:crypto_tracker' %}" method="post">
+<form action="{% url 'crypto_tracker:tracker' %}" method="post">
 {% csrf_token %}
     <input type="text" name="symbol">
-    <input type="text" name="price">
+    <input type="text" name="tracked_price">
     <input type="submit">
 </form>
 
 {% for info in data %}
-    <p> {{ info.symbol }} </p>
+    <div> {{ info.symbol }} {{ info.price }} {{ info.tracked_price }} 
+        <div class='difference'>{{ info.difference }}</div>
+    </div>
 {% endfor %}
 </html>
-{% endblock content %}
+{% endblock content%}

@@ -8,8 +8,9 @@
     
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    
+    {% block css %} {% endblock css %}
     <link rel="stylesheet" type="text/css" href="{% static 'crypto_email/main.css' %}">
+    {% block js %} {% endblock js %}
     {% if title %}
         <title>Crypto Email - {{ title }}</title>
     {% else %} 
@@ -29,7 +30,7 @@
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{% url 'crypto_email_index' %}">Home</a>
                 <a class="nav-item nav-link" href="{% url 'crypto_email_about' %}">About</a>
-                <a class="nav-item nav-link" href="{% url 'crypto_tracker:crypto_tracker' %}">Tracker</a>
+                <a class="nav-item nav-link" href="{% url 'crypto_tracker:tracker' %}">Tracker</a>
               </div>
               <!-- Navbar Right Side -->
               <div class="navbar-nav">

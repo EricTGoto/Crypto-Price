@@ -1,3 +1,4 @@
+from ast import Str
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -19,7 +20,22 @@ class GetCryptoData():
         'X-CMC_PRO_API_KEY': TOKEN,
     }
 
-    def get_data_from_cmp(self, id: list) -> dict:
+    def get_data_with_symbol(self, symbol: Str):
+        url = GetCryptoData.BASE_URL + 'quotes/latest'
+        parameters = {
+            'symbol': symbol
+        }
+        session = Session()
+        session.headers.update(GetCryptoData.HEADERS)
+
+        try:
+            response = session.get(url, params=parameters)
+            data = json.loads(response.text)
+            return data
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e) 
+
+    def get_data_from_cmc(self, id: list) -> dict:
         """
         Takes in a list of ids and gets the latest quote data.
         Note: data is returned in order of ascending IDs.
@@ -111,7 +127,7 @@ class GetCryptoData():
         cleaned_map_data = crypto_info.clean_map_response(map_data)
         ids = crypto_info.get_IDs(map_data)
         icon_links = crypto_info.get_icon(ids)
-        quotes= crypto_info.get_data_from_cmp(ids)
+        quotes= crypto_info.get_data_from_cmc(ids)
         data = crypto_info.add_coin_info_to_map_result(quotes, cleaned_map_data, icon_links)
         return data
 
@@ -148,9 +164,11 @@ if __name__ == "__main__":
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
 
+    print(crypto_info.get_data_with_symbol("ETH"))
+
     #ids= crypto_info.get_IDs(map_result)
     #icon_links = crypto_info.get_icon(ids)
-    print(crypto_info.get_quotes(10))
+    #print(crypto_info.get_quotes(10))
     #quotes_latest_result = crypto_info.get_data_from_cmp(ids)
     #clean = crypto_info.clean_map_response(map_result)
     #print(quotes_latest_result)
