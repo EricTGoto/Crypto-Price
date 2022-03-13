@@ -18,17 +18,23 @@ def tracker(request):
         difference = price - int(request.POST['tracked_price'])
         group = request.POST['group']
         
-        new_group = TrackedCoinGroup(group_name=group)
-        new_group.save()
-        new_tracked_crypto = new_group.trackedcoin_set.create(symbol=request.POST['symbol'], tracked_price = request.POST['tracked_price'], price = price, difference = difference)
+        #check if group exists, if not make a new group
+        if TrackedCoinGroup.objects.all().filter(group_name=group).count() != 0:
+            # group exits so just add it to the group
+            group = TrackedCoinGroup.objects.get(group_name=group)
+        else:
+            # group doesn't exist so create a new group and add it to the group
+            group = TrackedCoinGroup(group_name=group)
+            group.save()
+
+        new_tracked_crypto = group.trackedcoin_set.create(symbol=request.POST['symbol'], tracked_price = request.POST['tracked_price'], price = price, difference = difference)
         
-        # extract the coin groups from the tracked
         context = {'data': TrackedCoinGroup.objects.all()}
         print(context)
         
         return HttpResponseRedirect(reverse('crypto_tracker:tracker'), context)
     
-    context = {'data': TrackedCoin.objects.all()}
+    context = {'data': TrackedCoinGroup.objects.all()}
     return render(request, 'crypto_tracker/tracker.html', context)
 
 

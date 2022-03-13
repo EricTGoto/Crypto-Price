@@ -14,20 +14,28 @@
 
 <form action="{% url 'crypto_tracker:tracker' %}" method="post">
 {% csrf_token %}
-    <label for="group">Group</label>
-    <input type="text" name="group" id="group">
-    <label for="symbol">Symbol</label>
-    <input type="text" name="symbol" id="symbol">
-    <label for="tracked_price">Tracked Price</label>
-    <input type="text" name="tracked_price" id="tracked_price">
+    <div>
+        <label for="group">Group</label>
+        <input type="text" name="group" id="group">
+    </div>
+    <div
+        ><label for="symbol">Symbol</label>
+        <input type="text" name="symbol" id="symbol">
+    </div>
+    <div>
+        <label for="tracked_price">Tracked Price</label>
+        <input type="text" name="tracked_price" id="tracked_price"> 
+    </div>
     <input type="submit">
 </form>
 
 {% for coin_group in data %}
-    {% for coin in coin_group.trackedcoin_set.all() %}
-        <div> {{ coin.trackedcoingroup.group_name }} {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }} 
+    {{ coin_group.group_name }}
+    {% for coin in coin_group.trackedcoin_set.all %}
+        <div> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }} 
             <div class='difference'>{{ coin.difference }}</div>
         </div>
+    {% endfor %}
 {% endfor %}
 </html>
 {% endblock content%}

@@ -10,4 +10,5 @@ class TrackedCoin(models.Model):
     difference = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     trackedcoingroup = models.ForeignKey(TrackedCoinGroup, on_delete=models.CASCADE)
 
+    
 
