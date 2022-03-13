@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .models import CryptoTracker
+from .models import TrackedCoin, TrackedCoinGroup
 from django.urls import reverse
 
 from crypto_email.crypto_information import GetCryptoData
@@ -16,15 +16,19 @@ def tracker(request):
 
         # difference is positive if current price is greater than tracked price
         difference = price - int(request.POST['tracked_price'])
-        new_tracked_crypto = CryptoTracker(symbol=request.POST['symbol'], tracked_price = request.POST['tracked_price'], price = price, difference = difference)
+        group = request.POST['group']
         
-        new_tracked_crypto.save()
-        context = {'data': CryptoTracker.objects.all()}
+        new_group = TrackedCoinGroup(group_name=group)
+        new_group.save()
+        new_tracked_crypto = new_group.trackedcoin_set.create(symbol=request.POST['symbol'], tracked_price = request.POST['tracked_price'], price = price, difference = difference)
+        
+        # extract the coin groups from the tracked
+        context = {'data': TrackedCoinGroup.objects.all()}
         print(context)
         
         return HttpResponseRedirect(reverse('crypto_tracker:tracker'), context)
     
-    context = {'data': CryptoTracker.objects.all()}
+    context = {'data': TrackedCoin.objects.all()}
     return render(request, 'crypto_tracker/tracker.html', context)
 
 
