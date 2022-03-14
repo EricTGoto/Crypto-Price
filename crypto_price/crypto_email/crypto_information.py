@@ -3,10 +3,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #import send_email
-
+import requests
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import os
+from pathlib import Path
 import json
 from math import floor
 
@@ -132,6 +133,10 @@ class GetCryptoData():
         return data
 
     def get_icon(self, IDs: list):
+        """
+        Grabs icon url from CMC. Returns a dictionary of tuples with ID as key. Tuple[0] is the name of the coin, Tuple[1] is the URL
+        """
+
         url = GetCryptoData.BASE_URL + "info"
         parameters = {
             'id': ",".join(map(str, IDs))
@@ -143,11 +148,25 @@ class GetCryptoData():
         try:
             response = session.get(url, params=parameters)
             data = json.loads(response.text)
+            print(data)
             for id in IDs:
-                icon_links[f'{id}'] = data['data'][str(id)]['logo']
+                icon_links[f'{id}'] = (data['data'][str(id)]['name'],data['data'][str(id)]['logo'])
             return icon_links
         except (ConnectionError, Timeout, TooManyRedirects) as e:
             print(e) 
+
+    def download_image(self, icon_links: dict):
+        """
+        Downloads images and puts into the media folder.
+        """
+        base_folder =  Path(__file__).resolve().parent.parent
+        media_folder = os.path.join(base_folder, 'media')
+
+        for data in icon_links.values():
+            icon_path = os.path.join(media_folder, f'{data[0]}.png')
+            with open(icon_path, 'wb') as f:
+                f.write(requests.get(data[1]).content)
+                f.close()
 
 if __name__ == "__main__":
     crypto_info = GetCryptoData()
@@ -164,10 +183,14 @@ if __name__ == "__main__":
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
 
-    print(crypto_info.get_data_with_symbol("ETH"))
+    #print(crypto_info.get_data_with_symbol("ETH"))
 
     #ids= crypto_info.get_IDs(map_result)
-    #icon_links = crypto_info.get_icon(ids)
+    
+    icon_links = crypto_info.get_icon([1,1027])
+    crypto_info.download_image(icon_links)
+    
+
     #print(crypto_info.get_quotes(10))
     #quotes_latest_result = crypto_info.get_data_from_cmp(ids)
     #clean = crypto_info.clean_map_response(map_result)
