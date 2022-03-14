@@ -11,3 +11,4 @@ wsgi.py
 asgi.py
 migrations/
 main.css
+media/
