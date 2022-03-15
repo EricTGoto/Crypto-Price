@@ -11,4 +11,4 @@ wsgi.py
 asgi.py
 migrations/
 main.css
-media/
+crypto_price/crypto_tracker/static/crypto_tracker/crypto_images

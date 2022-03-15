@@ -102,7 +102,7 @@ class GetCryptoData():
             IDs.append(coin['id'])
         return IDs
 
-    def add_coin_info_to_map_result(self, quotes_latest_data: dict, cleaned_map_data: list, icon_links: list):
+    def add_coin_info_to_map_result(self, quotes_latest_data: dict, cleaned_map_data: list):
         '''
         Takes in quotes latest data and cleaned map data and adds price info to the cleaned map data.
         Returns a list of dictionaries with the following keys:
@@ -115,7 +115,6 @@ class GetCryptoData():
                     coin_data['market_cap'] = floor(info['quote']['USD']['market_cap'])
                     coin_data['percent_change_24h'] = round(info['quote']['USD']['percent_change_24h'], 2)
                     coin_data['percent_change_90d'] = round(info['quote']['USD']['percent_change_90d'], 2)
-                    coin_data['logo'] = icon_links[f'{id}']
                     break
         return cleaned_map_data
 
@@ -123,13 +122,13 @@ class GetCryptoData():
         """
         Gets formatted data.
         """
-        crypto_info = GetCryptoData()
-        map_data = crypto_info.get_top_coins(number_of_quotes)
-        cleaned_map_data = crypto_info.clean_map_response(map_data)
-        ids = crypto_info.get_IDs(map_data)
-        icon_links = crypto_info.get_icon(ids)
-        quotes= crypto_info.get_data_from_cmc(ids)
-        data = crypto_info.add_coin_info_to_map_result(quotes, cleaned_map_data, icon_links)
+        map_data = self.get_top_coins(number_of_quotes)
+        cleaned_map_data = self.clean_map_response(map_data)
+        ids = self.get_IDs(map_data)
+        #icon_links = self.get_icon(ids)
+        #self.download_image(icon_links)
+        quotes= self.get_data_from_cmc(ids)
+        data = self.add_coin_info_to_map_result(quotes, cleaned_map_data)
         return data
 
     def get_icon(self, IDs: list):
@@ -157,16 +156,17 @@ class GetCryptoData():
 
     def download_image(self, icon_links: dict):
         """
-        Downloads images and puts into the media folder.
+        Downloads images and puts into the media folder. 
         """
         base_folder =  Path(__file__).resolve().parent.parent
-        media_folder = os.path.join(base_folder, 'media')
-
+        media_folder = os.path.join(base_folder, 'crypto_tracker\static\crypto_tracker\crypto_images')
+        
         for data in icon_links.values():
             icon_path = os.path.join(media_folder, f'{data[0]}.png')
+           
             with open(icon_path, 'wb') as f:
                 f.write(requests.get(data[1]).content)
-                f.close()
+                f.close()    
 
 if __name__ == "__main__":
     crypto_info = GetCryptoData()

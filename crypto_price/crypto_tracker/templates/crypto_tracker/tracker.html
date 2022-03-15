@@ -29,13 +29,19 @@
     <input type="submit">
 </form>
 
+<div class="groups">
 {% for coin_group in data %}
+    <div class="group">
     {{ coin_group.group_name }}
     {% for coin in coin_group.trackedcoin_set.all %}
-        <div> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }} 
-            <div class='difference'>{{ coin.difference }}</div>
+        <div class="coin"> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }}
+            <span class='difference'>{{ coin.difference }}</span>
         </div>
     {% endfor %}
+    </div>
 {% endfor %}
+</div>
+
+<img src="{% static 'crypto_tracker/crypto_images/Bitcoin.png' %}">
 </html>
 {% endblock content%}

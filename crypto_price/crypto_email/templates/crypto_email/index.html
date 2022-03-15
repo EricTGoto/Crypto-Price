@@ -1,8 +1,9 @@
 {% extends "crypto_email/base.html" %}
+{% load static %}
 {% block content %}
 <h1>Top 10 by Market Cap</h1>
     {% for info in data %}
-        <div><img src="{{ info.logo }}" width="64px" height="64px">
+        <div><img src="{% static 'crypto_tracker/crypto_images' %}/{{ info.name }}.png" width="64px" height="64px">
         {{ info.name }} {{ info.symbol }}: {{ info.price }} {{info.percent_change_24h }}%</div>
     {% endfor %}
 {% endblock content %}

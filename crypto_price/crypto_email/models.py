@@ -2,6 +2,7 @@ from asyncio.windows_events import NULL
 from django.db import models
 from django.utils import timezone
 from .crypto_information import GetCryptoData
+from crypto_tracker.models import Coin
 
 class TopCrypto(models.Model):
     time_stamp = models.DateTimeField(auto_now=True)
@@ -12,7 +13,6 @@ class TopCrypto(models.Model):
     percent_change_90d = models.DecimalField(max_digits=5, decimal_places=2)
     symbol = models.CharField(max_length=5)
     rank = models.IntegerField()
-    logo = models.CharField(max_length=150)
 
     def __str__(self) -> str:
         return self.name
@@ -23,27 +23,45 @@ class TopCrypto(models.Model):
         """
         # If database is empty, then fetch data from CoinMarketCap.
         if TopCrypto.objects.all().count() == 0:
-            print("initial fetch data")
-            return self.initial_data_fetch(number_of_coins)
-        # If database is not empty and the cached data is more than x minutes old then fetch new data.
+            print("initial data fetch")
+            data = self.initial_data_fetch(number_of_coins)
+            self.download_new_icons(data)
+            return data
+        # If database is not empty and the stored data is more than x minutes old then fetch new data.
         elif (timezone.now() - TopCrypto.objects.first().time_stamp).seconds/60 >= 1:
             print("fetch new data")
-            return self.fetch_new_data(number_of_coins)
-        # If database is not empty and cached data is less than x minutes old, grab the cached data
+            data = self.fetch_new_data(number_of_coins)
+            self.download_new_icons(data)
+            return data
+        # If database is not empty and stored data is less than x minutes old, grab the stored data
         else:
-            print("cached data")
+            print("stored data")
             return TopCrypto.objects.all()
+    
+    def download_new_icons(self, data):
+        icons_to_get = []
+        for info in data:
+            if Coin.objects.filter(name=info['name']).count() == 0: 
+                icons_to_get.append(info['id'])
+                Coin(name=info['name'], symbol=info['symbol']).save()
+        print(f'got {len(icons_to_get)} icons')
+        self.get_icons(icons_to_get)
+
+    def get_icons(self, icon_list: list):
+        crypto_info = GetCryptoData()
+        icon_links = crypto_info.get_icon(icon_list)
+        crypto_info.download_image(icon_links)
 
     def initial_data_fetch(self, number_of_coins: int):
         """
-        When the website is accessed for the first time, the database will be empty so data will have to be fetched with the CMC API and then cached in to the database.
+        When the website is accessed for the first time, the database will be empty so data will have to be fetched with the CMC API and then stored in to the database.
         """
         crypto_info = GetCryptoData()
         data = crypto_info.get_quotes(number_of_coins)
 
-        # Cache into database
+        # Store into database
         for coin in data:
-            new_data = TopCrypto(name=coin['name'],price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], logo = coin['logo'])
+            new_data = TopCrypto(name=coin['name'],price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'])
             new_data.save()
 
         return data
@@ -56,7 +74,7 @@ class TopCrypto(models.Model):
         data = crypto_info.get_quotes(number_of_coins)
         # Update database
         for coin in data:
-            TopCrypto.objects.filter(name=coin['name']).update(price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], time_stamp=timezone.now(), logo=coin['logo'])
+            TopCrypto.objects.filter(name=coin['name']).update(price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], time_stamp=timezone.now())
 
         return data
 
