@@ -17,6 +17,10 @@ class TopCrypto(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.crypto_info = GetCryptoData()
+
     def fetch_data(self, number_of_coins: int):
         """
         Fetches data depending on the scenario.
@@ -48,16 +52,14 @@ class TopCrypto(models.Model):
         self.get_icons(icons_to_get)
 
     def get_icons(self, icon_list: list):
-        crypto_info = GetCryptoData()
-        icon_links = crypto_info.get_icon(icon_list)
-        crypto_info.download_image(icon_links)
+        icon_links = self.crypto_info.get_icon(icon_list)
+        self.crypto_info.download_image(icon_links)
 
     def initial_data_fetch(self, number_of_coins: int):
         """
         When the website is accessed for the first time, the database will be empty so data will have to be fetched with the CMC API and then stored in to the database.
         """
-        crypto_info = GetCryptoData()
-        data = crypto_info.get_quotes(number_of_coins)
+        data = self.crypto_info.get_quotes(number_of_coins)
 
         # Store into database
         for coin in data:
@@ -70,8 +72,7 @@ class TopCrypto(models.Model):
         """
         If the page is reloaded or the refresh button is pressed and enough time has elapsed, fetch new data. Update the data in the database.
         """
-        crypto_info = GetCryptoData()
-        data = crypto_info.get_quotes(number_of_coins)
+        data = self.crypto_info.get_quotes(number_of_coins)
         # Update database
         for coin in data:
             TopCrypto.objects.filter(name=coin['name']).update(price=coin['price'],market_cap=coin['market_cap'],percent_change_24h=coin['percent_change_24h'],percent_change_90d= coin['percent_change_90d'], symbol=coin['symbol'], rank=coin['rank'], time_stamp=timezone.now())
