@@ -22,6 +22,9 @@ class GetCryptoData():
     }
 
     def get_data_with_symbol(self, symbol: Str):
+        """
+        Queries CMC with a symbol and returns a dictionary with coin data. Keys: id, name, symbol, price
+        """
         url = GetCryptoData.BASE_URL + 'quotes/latest'
         parameters = {
             'symbol': symbol
@@ -32,7 +35,7 @@ class GetCryptoData():
         try:
             response = session.get(url, params=parameters)
             data = json.loads(response.text)
-            return data
+            return {'id': data['data'][symbol]['id'], 'name': data['data'][symbol]['name'], 'symbol': data['data'][symbol]['symbol'], 'price': data['data'][symbol]['quote']['USD']['price']}
         except (ConnectionError, Timeout, TooManyRedirects) as e:
             print(e) 
 
