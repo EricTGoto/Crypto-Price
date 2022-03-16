@@ -10,7 +10,7 @@
 {% endblock js %}
 
 {% block content %}
-<html>Track your favourite cryptocurrencies!
+<html>Track your favourite cryptocurrencies :D
 
 <form action="{% url 'crypto_tracker:tracker' %}" method="post">
 {% csrf_token %}
@@ -34,14 +34,12 @@
     <div class="group">
     {{ coin_group.group_name }}
     {% for coin in coin_group.trackedcoin_set.all %}
-        <div class="coin"> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }}
+        <div class="coin"> <img src="{% static 'crypto_tracker/crypto_images' %}/{{ coin.name }}.png"> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }}
             <span class='difference'>{{ coin.difference }}</span>
         </div>
     {% endfor %}
     </div>
 {% endfor %}
 </div>
-
-<img src="{% static 'crypto_tracker/crypto_images/Bitcoin.png' %}">
 </html>
 {% endblock content%}

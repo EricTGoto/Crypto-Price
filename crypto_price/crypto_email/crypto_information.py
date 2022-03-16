@@ -172,7 +172,7 @@ if __name__ == "__main__":
     crypto_info = GetCryptoData()
     #data = crypto_info.get_top_coins(2)
     #print(data)
-
+    print(crypto_info.get_data_with_symbol("ETH"))
     map_result = {'status': {'timestamp': '2022-02-26T18:31:54.293Z', 'error_code': 0, 'error_message': None, 'elapsed': 7, 'credit_count': 1, 'notice': None},
     'data': [
     {'id': 1, 'name': 'Bitcoin', 'symbol': 'BTC', 'slug': 'bitcoin', 'rank': 1, 'is_active': 1, 'first_historical_data': '2013-04-28T18:47:21.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': None}, 
@@ -187,8 +187,8 @@ if __name__ == "__main__":
 
     #ids= crypto_info.get_IDs(map_result)
     
-    icon_links = crypto_info.get_icon([1,1027])
-    crypto_info.download_image(icon_links)
+    #icon_links = crypto_info.get_icon([1,1027])
+    #crypto_info.download_image(icon_links)
     
 
     #print(crypto_info.get_quotes(10))
