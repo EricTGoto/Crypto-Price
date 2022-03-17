@@ -12,6 +12,10 @@ import json
 from math import floor
 
 class GetCryptoData():
+
+    def __init__(self) -> None:
+        self.__session = Session()
+
     # map and quotes/latest is one credit
     # 333 credits per day, 10000 a month
     BASE_URL = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/'
@@ -29,11 +33,11 @@ class GetCryptoData():
         parameters = {
             'symbol': symbol
         }
-        session = Session()
-        session.headers.update(GetCryptoData.HEADERS)
+        
+        self.__session.headers.update(GetCryptoData.HEADERS)
 
         try:
-            response = session.get(url, params=parameters)
+            response = self.__session.get(url, params=parameters)
             data = json.loads(response.text)
             return {'id': data['data'][symbol]['id'], 'name': data['data'][symbol]['name'], 'symbol': data['data'][symbol]['symbol'], 'price': data['data'][symbol]['quote']['USD']['price']}
         except (ConnectionError, Timeout, TooManyRedirects) as e:
@@ -48,11 +52,11 @@ class GetCryptoData():
         parameters = {
             'id': ','.join(map(str,id))
         }
-        session = Session()
-        session.headers.update(GetCryptoData.HEADERS)
+        
+        self.__session.headers.update(GetCryptoData.HEADERS)
 
         try:
-            response = session.get(url, params=parameters)
+            response = self.__session.get(url, params=parameters)
             data = json.loads(response.text)
             return data
         except (ConnectionError, Timeout, TooManyRedirects) as e:
@@ -72,11 +76,11 @@ class GetCryptoData():
             'limit': number_of_coins,
             'sort': "cmc_rank"
         }
-        session = Session()
-        session.headers.update(GetCryptoData.HEADERS)
+        
+        self.__session.headers.update(GetCryptoData.HEADERS)
 
         try:
-            response = session.get(url, params=parameters)
+            response = self.__session.get(url, params=parameters)
             data = json.loads(response.text)
             return data
         except (ConnectionError, Timeout, TooManyRedirects) as e:
@@ -128,8 +132,6 @@ class GetCryptoData():
         map_data = self.get_top_coins(number_of_quotes)
         cleaned_map_data = self.clean_map_response(map_data)
         ids = self.get_IDs(map_data)
-        #icon_links = self.get_icon(ids)
-        #self.download_image(icon_links)
         quotes= self.get_data_from_cmc(ids)
         data = self.add_coin_info_to_map_result(quotes, cleaned_map_data)
         return data
@@ -138,17 +140,16 @@ class GetCryptoData():
         """
         Grabs icon url from CMC. Returns a dictionary of tuples with ID as key. Tuple[0] is the name of the coin, Tuple[1] is the URL
         """
-
         url = GetCryptoData.BASE_URL + "info"
         parameters = {
             'id': ",".join(map(str, IDs))
         }
-        session = Session()
-        session.headers.update(GetCryptoData.HEADERS)
+        
+        self.__session.headers.update(GetCryptoData.HEADERS)
 
         icon_links = {}
         try:
-            response = session.get(url, params=parameters)
+            response = self.__session.get(url, params=parameters)
             data = json.loads(response.text)
             print(data)
             for id in IDs:
@@ -184,24 +185,6 @@ if __name__ == "__main__":
     {'id': 1839, 'name': 'BNB', 'symbol': 'BNB', 'slug': 'bnb', 'rank': 4, 'is_active': 1, 'first_historical_data': '2017-07-25T04:30:05.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': None}, 
     {'id': 3408, 'name': 'USD Coin', 'symbol': 'USDC', 'slug': 'usd-coin', 'rank': 5, 'is_active': 1, 'first_historical_data': '2018-10-08T18:49:28.000Z', 'last_historical_data': '2022-02-26T18:29:00.000Z', 'platform': {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum', 'token_address': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'}}
     ]}
-
-    #print(crypto_info.get_data_with_symbol("ETH"))
-
-    #ids= crypto_info.get_IDs(map_result)
-    
-    #icon_links = crypto_info.get_icon([1,1027])
-    #crypto_info.download_image(icon_links)
-    
-
-    #print(crypto_info.get_quotes(10))
-    #quotes_latest_result = crypto_info.get_data_from_cmp(ids)
-    #clean = crypto_info.clean_map_response(map_result)
-    #print(quotes_latest_result)
-    #print(clean)
-    #print(crypto_info.add_coin_info_to_map_result(quotes_latest_result, clean, icon_links ))
-
-    #print(crypto_info.get_quotes(5))
-    
     # info = extractInfo(xd, '1027')
     # sender = os.environ.get("test_sender")
     # receiver = os.environ.get("test_receiver")
