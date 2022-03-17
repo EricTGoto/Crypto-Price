@@ -31,6 +31,9 @@ class TrackedCoinGroup(models.Model):
             coin_info = crypto_data.get_data_with_symbol(symbol)
             coin = Coin(symbol=coin_info['symbol'], name=coin_info['name'])
             coin.save()
+            icon_link = crypto_data.get_icon([coin_info['id']])
+            crypto_data.download_image(icon_link)
+            # download coin image
         else:
             # coin exists, so we create a new trackedcoin under the appropriate coin and trackedcoingroup
             # TODO: return already existing info

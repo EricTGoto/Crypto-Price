@@ -168,8 +168,7 @@ class GetCryptoData():
             icon_path = os.path.join(media_folder, f'{data[0]}.png')
            
             with open(icon_path, 'wb') as f:
-                f.write(requests.get(data[1]).content)
-                f.close()    
+                f.write(requests.get(data[1]).content)   
 
 if __name__ == "__main__":
     crypto_info = GetCryptoData()
