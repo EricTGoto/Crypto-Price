@@ -28,11 +28,16 @@
     </div>
     <input type="submit">
 </form>
-
+<!--{% url 'crypto_tracker:delete_item' %}-->
 <div class="groups">
 {% for coin_group in data %}
+    <span>{{ coin_group.group_name }}
+        <form action="{% url 'crypto_tracker:delete_item' %}" method="post">
+        {% csrf_token %}
+        <input type="submit" name="{{ coin_group.group_name }}" value="X">
+        </form>
+    </span>
     <div class="group">
-    {{ coin_group.group_name }}
     {% for coin in coin_group.trackedcoin_set.all %}
         <div class="coin"> <img src="{% static 'crypto_tracker/crypto_images' %}/{{ coin.name }}.png" width="40px" height="40px"> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }}
             <span class='difference'>{{ coin.difference }}</span>
