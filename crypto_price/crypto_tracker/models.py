@@ -13,7 +13,7 @@ class TrackedCoinGroup(models.Model):
     def update_view(cls, request):
         crypto_data = GetCryptoData()
         group = request.POST['group']
-        symbol = request.POST['symbol']
+        symbol = request.POST['symbol'].upper()
         #check if group exists, if not make a new group
         if TrackedCoinGroup.objects.all().filter(group_name=group).count() != 0:
             # group exits so just add it to the group
@@ -39,7 +39,7 @@ class TrackedCoinGroup(models.Model):
             coin = Coin.objects.get(name=coin_info['name'])
             
         difference = coin.price - int(request.POST['tracked_price'])    
-        coin.trackedcoin_set.create(symbol=request.POST['symbol'], tracked_price = request.POST['tracked_price'], price = coin.price,difference = difference, name=coin_info['name'], trackedcoingroup = group)
+        coin.trackedcoin_set.create(symbol=symbol, tracked_price = request.POST['tracked_price'], price = coin.price,difference = difference, name=coin_info['name'], trackedcoingroup = group)
         context = {'data': TrackedCoinGroup.objects.all()}
         return context
 
