@@ -1,0 +1,41 @@
+html, 
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.site-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(137, 92, 179);
+  height: 8vh;
+}
+
+.header-width {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  font-size: 20px;
+  padding: 12px;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+}
+
+.content-width {
+  display: flex;
+  flex-direction: column;
+  width: 70vw;
+}
+
+
+

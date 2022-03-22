@@ -10,5 +10,4 @@ settings.py
 wsgi.py
 asgi.py
 migrations/
-main.css
 crypto_price/crypto_tracker/static/crypto_tracker/crypto_images

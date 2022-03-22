@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'crypto_email/main.css' %}">
     {% block css %} {% endblock css %}
     {% block js %} {% endblock js %}
     {% if title %}
@@ -18,11 +18,23 @@
 </head>
 <body>
     <header class="site-header">
-      <a class="navbar-brand mr-4" href="{% url 'crypto_email_index' %}">Crypto Info</a>
-      <a class="nav-item nav-link" href="{% url 'crypto_email_index' %}">Home</a>
-      <a class="nav-item nav-link" href="{% url 'crypto_email_about' %}">About</a>
-      <a class="nav-item nav-link" href="{% url 'crypto_tracker:tracker' %}">Tracker</a> 
-    </header> 
-    {% block content %}{% endblock %}
+        <div class="header-width">
+            <div class="header-left">
+                <a class="" href="{% url 'crypto_email_index' %}">Crypto Info</a>
+                <a class="" href="{% url 'crypto_email_index' %}">Home</a>
+                <a class="" href="{% url 'crypto_email_about' %}">About</a>
+                <a class="" href="{% url 'crypto_tracker:tracker' %}">Tracker</a>
+            </div>
+            <div class="header-right">
+                <a class="" href="{% url 'crypto_email_index' %}">Login</a>
+                <a class="" href="{% url 'crypto_email_index' %}">Register</a>
+            </div>
+        </div>
+    </header>
+    <div class="content">
+        <div class="content-width">
+        {% block content %}{% endblock %}
+        </div>
+    </div>
 </body>
 </html>
