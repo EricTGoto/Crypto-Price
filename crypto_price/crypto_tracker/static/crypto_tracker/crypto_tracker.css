@@ -1,6 +1,15 @@
+.groups {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.delete-button {
+    display: inline;
+}
+
 .group {
     display: flex;
-    flex-direction: column;
+    flex-flow: column wrap;
     font-size: 15px;
     width: 300px;
     margin: 10px 0px;
