@@ -1,15 +1,38 @@
+.tracker-form-group,
+.tracker-form {
+    padding-top: 20px;
+}
+
+.form-input {
+    display: inline;
+
+}
+
 .groups {
+    display: flex;
+    flex-flow: row wrap;
+    padding-top: 20px;
+    gap: 5vw;
+}
+
+.group-container {
     display: flex;
     flex-flow: row wrap;
 }
 
 .delete-button {
-    display: inline;
+    display: flex;
+    flex: 1 0 0;
 }
 
-.group {
+.delete-group-button {
+    width: 20px;
+    height: 20px;
+}
+
+.coins {
     display: flex;
-    flex-flow: column wrap;
+    flex-direction: column;
     font-size: 15px;
     width: 300px;
     margin: 10px 0px;

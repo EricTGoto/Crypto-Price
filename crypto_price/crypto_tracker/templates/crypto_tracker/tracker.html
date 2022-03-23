@@ -10,19 +10,19 @@
 {% endblock js %}
 
 {% block content %}
-        <div class="tracker-form">
+        <div class="tracker-form-group">
         Track your favourite cryptocurrencies!
-            <form action="{% url 'crypto_tracker:tracker' %}" method="post">
+            <form action="{% url 'crypto_tracker:tracker' %}" method="post" class="tracker-form">
             {% csrf_token %}
-                <div>
+                <div class="form-input">
                     <label for="group">Group</label>
                     <input type="text" name="group" id="group">
                 </div>
-                <div
-                    ><label for="symbol">Symbol</label>
+                <div class="form-input">
+                    <label for="symbol">Symbol</label>
                     <input type="text" name="symbol" id="symbol">
                 </div>
-                <div>
+                <div class="form-input">
                     <label for="tracked_price">Tracked Price</label>
                     <input type="text" name="tracked_price" id="tracked_price"> 
                 </div>
@@ -31,18 +31,20 @@
         </div>
         <div class="groups">
         {% for coin_group in data %}
-            <form class="delete-button" action="{% url 'crypto_tracker:delete_item' %}" method="post">
-                {% csrf_token %}
-                {{ coin_group.group_name }}
-                <input type="submit" name="{{ coin_group.group_name }}" value="X" class ="button">
-            </form>
-            
             <div class="group">
-            {% for coin in coin_group.trackedcoin_set.all %}
-                <div class="coin"> <img src="{% static 'crypto_tracker/crypto_images' %}/{{ coin.name }}.png" width="40px" height="40px"> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }}
-                    <span class='difference'>{{ coin.difference }}</span>
+                <form class="delete-button" action="{% url 'crypto_tracker:delete_item' %}" method="post">
+                    {% csrf_token %}
+                    {{ coin_group.group_name }}
+                    <input type="submit" name="{{ coin_group.group_name }}" value="X" class ="delete-group-button">
+                </form>
+                
+                <div class="coins">
+                {% for coin in coin_group.trackedcoin_set.all %}
+                    <div class="coin"> <img src="{% static 'crypto_tracker/crypto_images' %}/{{ coin.name }}.png" width="40px" height="40px"> {{ coin.symbol }} {{ coin.price }} {{ coin.tracked_price }}
+                        <span class='difference'>{{ coin.difference }}</span>
+                    </div>
+                {% endfor %}
                 </div>
-            {% endfor %}
             </div>
         {% endfor %}
         </div>
